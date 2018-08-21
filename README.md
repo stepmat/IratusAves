@@ -12,6 +12,7 @@ This information is provided in blocks of four lines, with each block containing
 - Range for number of pigs (two positive integers, minimum and maximum)
 - Time limit to generate levels (minutes) (positive integer)
 
+
 ![Alt text](/example_screenshots/1.PNG?raw=true "example generated level #1")
 
 ![Alt text](/example_screenshots/2.png?raw=true "example generated level #2")
