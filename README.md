@@ -1,5 +1,6 @@
 # IratusAves
-Winning entry for the 2017 and 2018 AIBIRDS level generation competitions
+Winning entry for the 2017 and 2018 AIBIRDS level generation competitions:
+https://aibirds.org/other-events/level-generation-competition.html
 
 Used to generate levels for the Science-Birds game by Lucas N. Ferreira:
 https://github.com/lucasnfe/Science-Birds
