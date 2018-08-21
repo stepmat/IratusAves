@@ -5,6 +5,8 @@ https://aibirds.org/other-events/level-generation-competition.html
 Used to generate levels for the Science-Birds game by Lucas N. Ferreira:
 https://github.com/lucasnfe/Science-Birds
 
+Please note that the agent performance and stability analysis features have been removed due to compatability issues.
+
 The number and content of the generated levels can be changed by altering the parameters.txt file.
 This file contains the necessary information about the levels that will be generated.
 This information is provided in blocks of four lines, with each block containing the following information in the given order:
