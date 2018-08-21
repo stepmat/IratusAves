@@ -1,4 +1,4 @@
-# IratusAves
+# IratusAves (MSGv2.0)
 Winning entry for the 2017 and 2018 AIBIRDS level generation competitions:
 https://aibirds.org/other-events/level-generation-competition.html
 
