@@ -66,7 +66,6 @@ level_height_max = 6.0
 
 number_birds = 20               # default number of birds within level, can be overwritten by choosing number of birds after level construction
 
-number_pigs = randint(6,8)          # number of pigs (if set too large then can cause program to infinitely loop)
 pig_precision = 0.01                # how precise to check for possible pig positions on ground
 
 tnt_point_requirment = 10
@@ -92,7 +91,7 @@ factor3_bonus = 1.0
 
 # used for trajectory estimation and identifying reachable blocks
 trajectory_accuracy = 0.5
-number_shots = 100
+number_shots = 50
 slingshot_x = -7.7
 slingshot_y = -1.0
 MAX_X = 20
@@ -2169,6 +2168,7 @@ def swap_blocks(complete_locations, final_pig_positions, final_platforms):
 
 
 
+# attempt to protect vulnerable blocks in structures
 
 def protect_vulnerable_blocks(complete_locations, complete_ground_locations, final_platforms, final_pig_positions, selected_other):
     vulnerable_blocks = []
@@ -2195,16 +2195,9 @@ def protect_vulnerable_blocks(complete_locations, complete_ground_locations, fin
 
 
 
-
-
-
-
-
+# set the material of each block
 
 def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
-
-
-
     final_materials = []
     final_blocks = []
     for ii in complete_locations:
@@ -2220,10 +2213,6 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
                 final_materials[i] = 3
 
     index = 0
-
-
-
-
     blocks_in_way_dup = find_blocks_in_way(complete_locations,final_pig_positions,selected_other,final_platforms)
 
     blocks_in_way_merged = []
@@ -2248,9 +2237,6 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
                         if final_materials[j] == 0:
                             final_materials[j] = material_choice
                         
-
-            
-    
     for structure in complete_locations:
         
         if uniform(0.0,1.0) < cluster_chance:
@@ -2305,10 +2291,7 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
 
 
 
-
-
-
-
+# selects the type and order of the birds, based on level properties
 
 def find_bird_order(complete_locations, final_pig_positions, final_platforms, selected_other, final_materials):
     number_wood = 0
@@ -2369,7 +2352,7 @@ def find_bird_order(complete_locations, final_pig_positions, final_platforms, se
     while (n < number_birds):
 
         n = n+1
-        
+
         new_birds = deepcopy(current_birds)
         new_birds[0] = new_birds[0]+1
         yellow_error = abs((new_birds[0]/n)-yellow)
@@ -2685,10 +2668,7 @@ def add_angled_terrain(pigs_placed_on_ground,extra_platforms_seperated):
 
 
 
-
-
-
-
+# remove any restricted blocks from the probability table (if all material combinations of this block are banned)
 
 def remove_blocks(restricted_blocks):
     total_prob_removed = 0.0
@@ -2707,16 +2687,7 @@ def remove_blocks(restricted_blocks):
 
 
 
-
-
-
-
-
-
-
-
-# generate level
-
+# generate level!
 
 backup_probability_table_blocks = deepcopy(probability_table_blocks)
 backup_materials = deepcopy(materials)
@@ -2766,17 +2737,12 @@ while (checker != ""):
 
             print(number_levels)
 
-            number_ground_structures = randint(2,4)                     # number of ground structures
-            number_platforms = randint(1,3)                             # number of platforms (reduced automatically if not enough space)
             number_pigs = randint(int(pig_range[0]),int(pig_range[1]))  # number of pigs (if set too large then can cause program to infinitely loop)
 
             if (current_level+finished_levels+4) < 10:
                 level_name = "0"+str(current_level+finished_levels+4)
             else:
                 level_name = str(current_level+finished_levels+4)
-
-
-
 
             number_ground_structures, complete_locations, possible_pig_positions, pig_protect_values, ground_divides = create_ground_structures()
 
@@ -2859,36 +2825,12 @@ while (checker != ""):
             new_structure_pigs = deepcopy(structure_pigs)
             new_structure_tnts = deepcopy(structure_tnts)
 
-            #write_structure_xml(new_all_structures,new_structure_others,new_structure_pigs,new_structure_tnts)
-
             final_materials, final_blocks = set_materials(complete_locations, final_pig_positions, vulnerable_blocks)
 
-
-
-
-
-
-
-
-
-
-
-            #print(restricted_combinations)
-            #print(final_materials)
-            #print(final_blocks)
             for i in range (len(final_materials)):
-                #print([materials[str(final_materials[i])],block_names[str(final_blocks[i][0])]])
                 while [materials[str(final_materials[i])],block_names[str(final_blocks[i][0])]] in restricted_combinations:
-                    #print("changed")
                     
                     final_materials[i] = randint(0,len(materials)-1)+1
-
-
-
-
-
-
-
 
             bird_order = find_bird_order(complete_locations, final_pig_positions, final_platforms, selected_other, final_materials)
 
