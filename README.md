@@ -15,6 +15,8 @@ This information is provided in blocks of four lines, with each block containing
 - Range for number of pigs (two positive integers, minimum and maximum)
 - Time limit to generate levels (minutes) (positive integer)
 
+Note that for this generator version the "Time limit" parameter makes no difference to the generated content.
+
 
 ![Alt text](/example_screenshots/1.PNG?raw=true "example generated level #1")
 
