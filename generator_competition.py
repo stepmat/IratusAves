@@ -136,6 +136,16 @@ max_slope_height = 1.5
 max_slope_increase = 1.0
 add_slopes = True
 
+#weighting multipliers on number of birds
+number_birds_weight = 1.0           # higher number means more birds (easier levels)
+number_red_birds_weight = 1.0       # higher number means more red birds
+number_blue_birds_weight = 1.0      # higher number means more blue birds
+number_yellow_birds_weight = 1.0    # higher number means more yellow birds
+number_black_birds_weight = 1.0     # higher number means more black birds
+number_white_birds_weight = 1.0     # higher number means more white birds
+
+
+
 
 
 
@@ -845,9 +855,10 @@ def create_platform_structures(final_platforms, platform_centers, complete_locat
 # choose the number of birds based on the number of pigs and structures present within level
 
 def choose_number_birds(final_pig_positions,number_ground_structures,number_platforms):
-    number_birds = int(ceil(len(final_pig_positions)/3))
+    number_birds = len(final_pig_positions)/3.0
     if (number_ground_structures + number_platforms) >= number_birds:
-        number_birds = number_birds + 1      
+        number_birds = number_birds + 1.0
+    number_birds = int(ceil(number_birds*number_birds_weight))
     return number_birds
 
 
@@ -2341,11 +2352,11 @@ def find_bird_order(complete_locations, final_pig_positions, final_platforms, se
 
     total_ratio = wood_ratio + ice_ratio + stone_ratio + protected_ratio + unprotected_ratio
 
-    yellow = wood_ratio/total_ratio
-    blue = ice_ratio/total_ratio
-    black = stone_ratio/total_ratio
-    white = protected_ratio/total_ratio
-    red = unprotected_ratio/total_ratio
+    yellow = wood_ratio/total_ratio * number_yellow_birds_weight
+    blue = ice_ratio/total_ratio * number_blue_birds_weight
+    black = stone_ratio/total_ratio * number_black_birds_weight
+    white = protected_ratio/total_ratio * number_white_birds_weight
+    red = unprotected_ratio/total_ratio * number_red_birds_weight
 
     n = 0.0
     current_birds = [0,0,0,0,0]
