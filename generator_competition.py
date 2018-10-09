@@ -19,20 +19,25 @@ block_names = {'1':"SquareHole", '2':"RectFat", '3':"RectFat", '4':"SquareSmall"
                '9':"RectSmall",'10':"RectMedium",'11':"RectMedium",
                '12':"RectBig",'13':"RectBig"}
 
-# additional objects number and name
-additional_objects = {'1':"TriangleHole", '2':"Triangle", '3':"Circle", '4':"CircleSmall"}
-
-# additional objects number and size
-additional_object_sizes = {'1':[0.82,0.82],'2':[0.82,0.82],'3':[0.8,0.8],'4':[0.45,0.45]}
-
 # blocks number and probability of being selected
 probability_table_blocks = {'1':0.11870840863728756, '2':0.1114263927034903, '3':0.037753878358891865, '4':0.050210142536973326,
                             '5':0.06667300685830699, '6':0.07107219573486978, '7':0.07413694113148758, '8':0.11716619240567361,
                             '9':0.048982179880264536, '10':0.11503886132727455, '11':0.015224307126955784,
                             '12':0.15079620524923362, '13':0.02281128804929053}
 
+# additional objects number and name
+additional_objects = {'1':"TriangleHole", '2':"Triangle", '3':"Circle", '4':"CircleSmall"}
+
+# additional objects number and size
+additional_object_sizes = {'1':[0.82,0.82],'2':[0.82,0.82],'3':[0.8,0.8],'4':[0.45,0.45]}
+
 # materials number and name
 materials = {'1':"wood", '2':"ice", '3':"stone"}
+
+# material number and probabilty of being selected
+probability_table_materials = {'1':0.4, '2':0.3, '3':0.3}
+# material number and probabilty of being selected, when used for trajectory based material selection
+probability_table_materials_trajectory = {'1':0.5, '2':0.5, '3':0.0}
 
 # Bird types number and name
 bird_types_index = {'0':"BirdYellow", '1':"BirdBlue", '2':"BirdBlack", '3':"BirdRed", '4':"BirdWhite"}
@@ -64,11 +69,7 @@ level_width_max = 9.0
 level_height_min = -2.0         # only used by platforms, ground structures use absolute_ground to determine their lowest point
 level_height_max = 6.0
 
-number_birds = 20               # default number of birds within level, can be overwritten by choosing number of birds after level construction
-
 pig_precision = 0.01                # how precise to check for possible pig positions on ground
-
-tnt_point_requirment = 10
 
 number_ground_structures = randint(2,4)     # number of ground structures
 min_ground_width = 2.5                      # minimum amount of space allocated to ground structure
@@ -338,12 +339,12 @@ def check_inner_both(grouping,choosen_item,current_tree_bottom):
 
 # choose a random item/block from the blocks dictionary based on probability table
 
-def choose_item():
+def choose_item(probability_table):
     ran_num = uniform(0.0,1.0)
     selected_num = 0
     while ran_num > 0:
         selected_num = selected_num + 1
-        ran_num = ran_num - probability_table_blocks[str(selected_num)]
+        ran_num = ran_num - probability_table[str(selected_num)]
     return selected_num
 
 
@@ -384,7 +385,7 @@ def find_structure_height(structure):
 def add_new_row(current_tree_bottom, total_tree):
 
     groupings = generate_subsets(current_tree_bottom)   # generate possible groupings of bottom row objects
-    choosen_item = choose_item()                        # choosen block for new row
+    choosen_item = choose_item(probability_table_blocks)# choosen block for new row
     center_groupings = []                               # collection of viable groupings with new block at center
     edge_groupings = []                                 # collection of viable groupings with new block at edges
     both_groupings = []                                 # collection of viable groupings with new block at both center and edges
@@ -486,7 +487,7 @@ def make_peaks(center_point):
 
     current_tree_bottom = []        # bottom blocks of structure
     number_peaks = randint(1,max_peaks)     # this is the number of peaks the structure will have
-    top_item = choose_item()    # this is the item at top of structure
+    top_item = choose_item(probability_table_blocks)    # this is the item at top of structure
 
     if number_peaks == 1:
         current_tree_bottom.append([top_item,center_point])     
@@ -1646,7 +1647,7 @@ def protect_vulnerable_blocks1(complete_locations, complete_ground_locations, fi
                         new_stack.append(new_block)
                         number_attempts = 0
                     overlap = False
-                    choosen_item = choose_item()
+                    choosen_item = choose_item(probability_table_blocks)
                     if new_stack == []:
                         x_position = leftmost_point - blocks[str(choosen_item)][0]/2.0 - buffer 
                         new_block = [choosen_item, x_position, absolute_ground+(blocks[str(choosen_item)][1]/2.0)]
@@ -1905,9 +1906,9 @@ def write_level_xml(final_blocks, selected_other, final_pig_positions, final_pla
         f.write('<Block type="%s" material="%s" x="%s" y="%s" rotation="%s" />\n' % (block_names[str(i[0])],materials[str(j)], str(i[1]), str(i[2]), str(rotation)))
 
     for i in selected_other:
-        material = materials[str(randint(1,len(materials)))]       # material is chosen randomly
+        material = materials[str(choose_item(probability_table_materials))]       # material is chosen randomly
         while [material,additional_objects[str(i[0])]] in restricted_combinations:      # if material if not allowed for block type then pick again
-            material = materials[str(randint(1,len(materials)))]
+            material = materials[str(choose_item(probability_table_materials))]
         if i[0] == '1':
             f.write('<Block type="%s" material="%s" x="%s" y="%s" rotation="0" />\n' % (additional_objects[i[0]], material, str(i[1]), str(i[2])))
         if i[0] == '2':
@@ -2230,7 +2231,7 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
         
     for grouping in blocks_in_way:
         if (uniform(0.0,1.0) < trajectory_chance):
-            material_choice = randint(1,2)
+            material_choice = choose_item(probability_table_materials_trajectory)
             for block in grouping:
                 for j in range(len(final_blocks)):
                     if block == final_blocks[j]:
@@ -2244,7 +2245,7 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
             current_point = randint(0,len(structure)-1)
             #current_point = 0
             start_point = current_point
-            material_choice = randint(1,3)
+            material_choice = choose_item(probability_table_materials)
             while (all_set == 0):
                 final_materials[index+current_point] = material_choice
                 smallest_distance = 9999
@@ -2256,7 +2257,7 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
                                                       ((structure[i][2]-structure[start_point][2]) * (structure[i][2]-structure[start_point][2])) )
                             current_point = i
                             if uniform(0.0,1.0) < cluster_swap_prob:
-                                material_choice = randint(1,3)
+                                material_choice = choose_item(probability_table_materials)
                                 start_point = current_point
                 if smallest_distance == 9999:
                     all_set = 1
@@ -2264,13 +2265,13 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
                     
         elif uniform(0.0,1.0) < random_chance:
             for block in structure:
-                material_choice = randint(1,3)
+                material_choice = choose_item(probability_table_materials)
                 if final_materials[index] == 0:
                     final_materials[index] = material_choice
                 index = index + 1
         
         elif len(structure) <= small_threshold:
-            material_choice = randint(1,3)
+            material_choice = choose_item(probability_table_materials)
             for block in structure:
                 if final_materials[index] == 0:
                     final_materials[index] = material_choice
@@ -2280,7 +2281,7 @@ def set_materials(complete_locations, final_pig_positions, vulnerable_blocks):
             current_y = 999
             for block in structure:
                 if block[2] != current_y:
-                    material_choice = randint(1,3)
+                    material_choice = choose_item(probability_table_materials)
                     current_y = block[2]
                 if final_materials[index] == 0:
                     final_materials[index] = material_choice
@@ -2717,11 +2718,6 @@ while (checker != ""):
                 restricted_blocks.append(value)
 
         probability_table_blocks = deepcopy(backup_probability_table_blocks)
-        trihole_allowed = True
-        tri_allowed = True
-        cir_allowed = True
-        cirsmall_allowed = True
-        TNT_allowed = True
 
         probability_table_blocks = remove_blocks(restricted_blocks)     # remove restricted block types from the structure generation process
         if "TriangleHole" in restricted_blocks:
@@ -2830,7 +2826,7 @@ while (checker != ""):
             for i in range (len(final_materials)):
                 while [materials[str(final_materials[i])],block_names[str(final_blocks[i][0])]] in restricted_combinations:
                     
-                    final_materials[i] = randint(0,len(materials)-1)+1
+                    final_materials[i] = choose_item(probability_table_materials)
 
             bird_order = find_bird_order(complete_locations, final_pig_positions, final_platforms, selected_other, final_materials)
 
