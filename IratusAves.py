@@ -17,18 +17,24 @@ number_levels = 10
 minimum_number_pigs = 4
 maximum_number_pigs = 8
 
-# Weight multipliers on the number and type of birds in the level
+# Weight multiplier on the number of birds in the level
 # Increasing or decreasing the value for "number_birds_weight" will affect the levels difficulty
-number_birds_weight = 1.0           # higher number means more birds (easier levels)
-number_red_birds_weight = 1.0       # higher number means more red birds
-number_blue_birds_weight = 1.0      # higher number means more blue birds
-number_yellow_birds_weight = 1.0    # higher number means more yellow birds
-number_black_birds_weight = 1.0     # higher number means more black birds
-number_white_birds_weight = 1.0     # higher number means more white birds
+# E.g. increasing this value to 2.0 will give the player twice as many birds as normal (easier level)
+number_birds_weight = 1.0
+
+# Weight multiplier on the type of birds in the level
+# Increasing the value for a certain bird type increases its likelihood of being given to the player
+# E.g. increasing the vlaue for number_blue_birds_weight to 2.0 will give the player twice as many blue birds as normal
+# These weights are all considered relative to each other, so increasing all values to 2.0 will make no difference.
+number_red_birds_weight = 1.0
+number_blue_birds_weight = 1.0
+number_yellow_birds_weight = 1.0
+number_black_birds_weight = 1.0
+number_white_birds_weight = 1.0
 
 # Probability of selecting each block type when generating structures
-# Giving higher probabilities to larger blocks will reduce the average number of blocks in a strucutre, and vice versa.
-# The sum of all values should add up to 1.0
+# Giving higher probabilities to larger blocks will reduce the average number of blocks in a structure, and vice versa.
+# The values for these probabilities are all considered relative to each other, so doubling all probabilities will make no difference.
 # See Figure 2 of the paper found at the following link, for information about which numbers correspond to which blocks
 # https://github.com/stepmat/IratusAves/blob/master/research_papers/(V0.5)%20(CIG16)%20Procedural%20Generation%20of%20Complex%20Stable%20Structures%20for%20Angry%20Birds%20Levels.pdf
 probability_table_blocks = {'1':0.11870840863728756, '2':0.1114263927034903, '3':0.037753878358891865, '4':0.050210142536973326,
@@ -36,13 +42,13 @@ probability_table_blocks = {'1':0.11870840863728756, '2':0.1114263927034903, '3'
                             '9':0.048982179880264536, '10':0.11503886132727455, '11':0.015224307126955784,
                             '12':0.15079620524923362, '13':0.02281128804929053}
 
-# Probability of selecting each material
+# Probability of selecting each material when selecting the material for a block
 # 1 = wood, 2 = ice, 3 = stone
-# The sum of all values should add up to 1.0
+# The values for these probabilities are all considered relative to each other, so doubling all probabilities will make no difference.
 probability_table_materials = {'1':0.4, '2':0.3, '3':0.3}
 
 # Defines local stability requirements (0 = nothing, 1 = edges or middle, 2 = edges only, 3 = edges and middle)
-# 0 and 1 may not result in a stable level, 2 gurantees a stable level, 3 gives VERY reobust structures
+# 0 and 1 may not result in a stable level, 2 guarantees a stable level, 3 gives VERY robust structures
 robustness = 2              
 
 # Maximum number of peaks a structure can have
@@ -50,7 +56,7 @@ robustness = 2
 max_peaks = 5               
 
 # Minimum and Maximum number of ground structures
-# Number of grund structures in a level is selected uniformly at random between these two values
+# Number of ground structures in a level is selected uniformly at random between these two values
 # Value will be reduced automatically if there is not enough space in the level
 minimum_number_ground_structures = 1
 maximum_number_ground_structures = 3
@@ -61,7 +67,7 @@ maximum_number_ground_structures = 3
 minimum_number_platform_structures = 0
 maximum_number_platform_structures = 2          
 
-# If additional non-rectangular blocks should be placed on top of structures
+# If additional non-rectangular blocks (i.e. circular and triangular blocks) should be placed on top of structures after they are generated
 additional_nonrectangular_blocks = True
 
 # Minimum and Maximum number of TNT boxes
@@ -75,7 +81,7 @@ add_slopes = True
 
 
 #-------------------------------------------------------------------------------
-# Constants (don't change these values unles you know what you are doing)
+# Constants (don't change these values unless you know what you are doing)
 #-------------------------------------------------------------------------------
 
 # blocks number and size
@@ -85,7 +91,7 @@ blocks = {'1':[0.84,0.84], '2':[0.85,0.43], '3':[0.43,0.85], '4':[0.43,0.43],
           '12':[2.06,0.22], '13':[0.22,2.06]}
 
 # blocks number and name
-# (blocks 3, 7, 9, 11 and 13) are their respective block names rotated 90 derees clockwise
+# (blocks 3, 7, 9, 11 and 13) are their respective block names rotated 90 degrees clockwise
 block_names = {'1':"SquareHole", '2':"RectFat", '3':"RectFat", '4':"SquareSmall",
                '5':"SquareTiny", '6':"RectTiny", '7':"RectTiny", '8':"RectSmall",
                '9':"RectSmall",'10':"RectMedium",'11':"RectMedium",
@@ -113,12 +119,12 @@ absolute_ground = -3.5          # the position of ground within level
 # Complex parameters
 #-------------------------------------------------------------------------------
 
-# material number and probabilty of being selected, when used for trajectory based material selection
+# material number and probability of being selected, when used for trajectory based material selection
 probability_table_materials_trajectory = {'1':0.5, '2':0.5, '3':0.0}
 
 vul_robustness = 1          # defines the local stability requirements for vulnerability analysis
 
-edge_buffer = 0.11      # buffer uesd to push edge blocks further into the structure center (increases stability)
+edge_buffer = 0.11      # buffer used to push edge blocks further into the structure center (increases stability)
 check_buffer = 0.05    # buffer used when checking if edges supported
 
 min_peak_split = 10     # minimum distance between two peak blocks of structure
@@ -165,7 +171,7 @@ scale = 1.0
 scaleFactor = 1.65
 
 # used for protecting vulnerable blocks
-vulnerable_score_threshold = 15     # threshold for determing which blocks are vulnerable (+1 for each affected block, +10 for each affected pig)
+vulnerable_score_threshold = 15     # threshold for determining which blocks are vulnerable (+1 for each affected block, +10 for each affected pig)
 buffer_min = 0.1                    # minimum distance that protection stack can be from vulnerable block
 buffer_max = 0.5                    # maximum distance that protection stack can be from vulnerable block
 height_bonus = 1.0                  # this plus vulnerable block height gives maximum protection stack height
@@ -413,6 +419,17 @@ def choose_item(probability_table):
         selected_num = selected_num + 1
         ran_num = ran_num - probability_table[str(selected_num)]
     return selected_num
+    
+    
+    
+    
+# normalise the values in the specified dictionary to sum to one
+
+def normalise_dictionary(d):
+    factor=1.0/sum(d.values())
+    for k in d:
+        d[k] = d[k]*factor
+    return d
 
 
 
@@ -2747,6 +2764,9 @@ while (finished_levels < number_levels):
     number_platforms = randint(minimum_number_platform_structures, maximum_number_platform_structures)
     number_pigs = randint(minimum_number_pigs, maximum_number_pigs)
     number_TNT = randint(minimum_number_TNT, maximum_number_TNT)
+    
+    probability_table_blocks = normalise_dictionary(probability_table_blocks)
+    probability_table_materials = normalise_dictionary(probability_table_materials)
 
     print("")
     print("Generating level: " + str(finished_levels))
