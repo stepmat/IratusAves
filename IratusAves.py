@@ -11,11 +11,13 @@ import itertools
 #-------------------------------------------------------------------------------
 
 # Number of levels to generate
-number_levels = 1000
+number_levels = 10
 
-# Number of Pigs in the generated level
+# Minimum and Maximum number of pigs
+# Number of pigs in a level is selected uniformly at random between these two values
+# Value will be reduced automatically if there is not enough space in the level
 minimum_number_pigs = 4
-maximum_number_pigs = 18
+maximum_number_pigs = 8
 
 # Weight multiplier on the number of birds in the level
 # Increasing or decreasing the value for "number_birds_weight" will affect the levels difficulty
@@ -24,7 +26,7 @@ number_birds_weight = 1.0
 
 # Weight multiplier on the type of birds in the level
 # Increasing the value for a certain bird type increases its likelihood of being given to the player
-# E.g. increasing the vlaue for number_blue_birds_weight to 2.0 will give the player twice as many blue birds as normal
+# E.g. increasing the value for number_blue_birds_weight to 2.0 will give the player twice as many blue birds as normal
 # These weights are all considered relative to each other, so increasing all values to 2.0 will make no difference.
 number_red_birds_weight = 1.0
 number_blue_birds_weight = 1.0
@@ -52,20 +54,21 @@ probability_table_materials = {'1':0.4, '2':0.3, '3':0.3}
 robustness = 2              
 
 # Maximum number of peaks a structure can have
+# Number of peaks for a structure is selected uniformly at random between one and this value
 # The value for this cannot go higher than 5
 max_peaks = 5               
 
 # Minimum and Maximum number of ground structures
 # Number of ground structures in a level is selected uniformly at random between these two values
 # Value will be reduced automatically if there is not enough space in the level
-minimum_number_ground_structures = 2
-maximum_number_ground_structures = 5
+minimum_number_ground_structures = 1
+maximum_number_ground_structures = 3
 
 # Minimum and Maximum number of platform structures
 # Number of platform structures in a level is selected uniformly at random between these two values
 # Value will be reduced automatically if there is not enough space in the level
-minimum_number_platform_structures = 2
-maximum_number_platform_structures = 5          
+minimum_number_platform_structures = 0
+maximum_number_platform_structures = 2         
 
 # If additional non-rectangular blocks (i.e. circular and triangular blocks) should be placed on top of structures after they are generated
 additional_nonrectangular_blocks = True
@@ -73,10 +76,11 @@ additional_nonrectangular_blocks = True
 # Minimum and Maximum number of TNT boxes
 # Number of TNTs in a level is selected uniformly at random between these two values
 # Value will be reduced automatically if not enough valid locations are found
-minimum_number_TNT = 4
-maximum_number_TNT = 6
+minimum_number_TNT = 0
+maximum_number_TNT = 3
 
-# If slopes should be added to the generated level
+# If slopes can be added to the generated level
+# Not all levels will necessarily contain slopes
 add_slopes = True
 
 
