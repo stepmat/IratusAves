@@ -150,7 +150,7 @@ level_height_max = 6.0
 min_ground_width = 2.5                      # minimum amount of space allocated to ground structure
 ground_structure_height_limit = ((level_height_max - minimum_height_gap) - absolute_ground)/1.5    # desired height limit of ground structures
 
-max_attempts = 100                          # number of times to attempt to place a platform or structure before abandoning it
+max_attempts = 100                          # number of times to attempt to place a platform, structure or row before abandoning it
 
 # factors that influence pig choice
 factor1_weight = 3.0
@@ -466,7 +466,7 @@ def find_structure_height(structure):
 
 # adds a new row of blocks to the bottom of the structure
 
-def add_new_row(current_tree_bottom, total_tree):
+def add_new_row(current_tree_bottom, total_tree, new_row_attempts):
 
     groupings = generate_subsets(current_tree_bottom)   # generate possible groupings of bottom row objects
     choosen_item = choose_item(probability_table_blocks)# choosen block for new row
@@ -558,9 +558,11 @@ def add_new_row(current_tree_bottom, total_tree):
         current_tree_bottom = new_bottom
         total_tree.append(current_tree_bottom)      # add new bottom row to the structure
         return total_tree, current_tree_bottom      # return the new structure
-    
+    elif(new_row_attempts > max_attempts):
+        return total_tree, current_tree_bottom      # return the new structure
     else:
-        return add_new_row(current_tree_bottom, total_tree) # choose a new block and try again if no options available
+        new_row_attempts = new_row_attempts + 1
+        return add_new_row(current_tree_bottom, total_tree, new_row_attempts) # choose a new block and try again if no options available
 
 
 
@@ -612,6 +614,7 @@ def make_peaks(center_point):
 def make_structure(absolute_ground, center_point, max_width, max_height):
     
     total_tree = []                 # all blocks of structure (so far)
+    new_row_attempts = 0
 
     # creates the first row (peaks) for the structure, ensuring that max_width restriction is satisfied
     current_tree_bottom = make_peaks(center_point)
@@ -628,7 +631,7 @@ def make_structure(absolute_ground, center_point, max_width, max_height):
     if max_height > 0.0 or max_width > 0.0:
         pre_total_tree = [current_tree_bottom]
         while structure_height < max_height and structure_width < max_width:
-            total_tree, current_tree_bottom = add_new_row(current_tree_bottom, total_tree)
+            total_tree, current_tree_bottom = add_new_row(current_tree_bottom, total_tree, new_row_attempts)
             complete_locations = []
             ground = absolute_ground
             for row in reversed(total_tree):
