@@ -11,11 +11,11 @@ import itertools
 #-------------------------------------------------------------------------------
 
 # Number of levels to generate
-number_levels = 10
+number_levels = 1000
 
 # Number of Pigs in the generated level
 minimum_number_pigs = 4
-maximum_number_pigs = 8
+maximum_number_pigs = 18
 
 # Weight multiplier on the number of birds in the level
 # Increasing or decreasing the value for "number_birds_weight" will affect the levels difficulty
@@ -58,14 +58,14 @@ max_peaks = 5
 # Minimum and Maximum number of ground structures
 # Number of ground structures in a level is selected uniformly at random between these two values
 # Value will be reduced automatically if there is not enough space in the level
-minimum_number_ground_structures = 1
-maximum_number_ground_structures = 3
+minimum_number_ground_structures = 2
+maximum_number_ground_structures = 5
 
 # Minimum and Maximum number of platform structures
 # Number of platform structures in a level is selected uniformly at random between these two values
 # Value will be reduced automatically if there is not enough space in the level
-minimum_number_platform_structures = 0
-maximum_number_platform_structures = 2          
+minimum_number_platform_structures = 2
+maximum_number_platform_structures = 5          
 
 # If additional non-rectangular blocks (i.e. circular and triangular blocks) should be placed on top of structures after they are generated
 additional_nonrectangular_blocks = True
@@ -73,8 +73,8 @@ additional_nonrectangular_blocks = True
 # Minimum and Maximum number of TNT boxes
 # Number of TNTs in a level is selected uniformly at random between these two values
 # Value will be reduced automatically if not enough valid locations are found
-minimum_number_TNT = 0
-maximum_number_TNT = 2   
+minimum_number_TNT = 4
+maximum_number_TNT = 6
 
 # If slopes should be added to the generated level
 add_slopes = True
@@ -150,7 +150,7 @@ level_height_max = 6.0
 min_ground_width = 2.5                      # minimum amount of space allocated to ground structure
 ground_structure_height_limit = ((level_height_max - minimum_height_gap) - absolute_ground)/1.5    # desired height limit of ground structures
 
-max_attempts = 100                          # number of times to attempt to place a platform, structure or row before abandoning it
+max_attempts = 100                          # number of times to attempt to place a platform, structure, row or pig before abandoning it
 
 # factors that influence pig choice
 factor1_weight = 3.0
@@ -557,12 +557,11 @@ def add_new_row(current_tree_bottom, total_tree, new_row_attempts):
 
         current_tree_bottom = new_bottom
         total_tree.append(current_tree_bottom)      # add new bottom row to the structure
-        return total_tree, current_tree_bottom      # return the new structure
+        return total_tree, current_tree_bottom, True      # return the new structure
     elif(new_row_attempts > max_attempts):
-        return total_tree, current_tree_bottom      # return the new structure
+        return total_tree, current_tree_bottom, False      # return the new structure
     else:
-        new_row_attempts = new_row_attempts + 1
-        return add_new_row(current_tree_bottom, total_tree, new_row_attempts) # choose a new block and try again if no options available
+        return add_new_row(current_tree_bottom, total_tree, new_row_attempts+1) # choose a new block and try again if no options available
 
 
 
@@ -630,8 +629,9 @@ def make_structure(absolute_ground, center_point, max_width, max_height):
     structure_height = (blocks[str(current_tree_bottom[0][0])][1])/2
     if max_height > 0.0 or max_width > 0.0:
         pre_total_tree = [current_tree_bottom]
-        while structure_height < max_height and structure_width < max_width:
-            total_tree, current_tree_bottom = add_new_row(current_tree_bottom, total_tree, new_row_attempts)
+        row_add_successful = True
+        while structure_height < max_height and structure_width < max_width and row_add_successful:
+            total_tree, current_tree_bottom, row_add_successful = add_new_row(current_tree_bottom, total_tree, new_row_attempts)
             complete_locations = []
             ground = absolute_ground
             for row in reversed(total_tree):
@@ -1193,7 +1193,8 @@ def add_additional_blocks(possible_trihole_positions, possible_tri_positions, po
 def add_pigs(number_pigs, possible_pig_positions, complete_locations, pig_protect_values, final_platforms,extra_platforms):
     final_pig_positions = []
     pigs_placed_on_ground = False
-    while len(final_pig_positions) < number_pigs:
+    num_attempts = 0
+    while len(final_pig_positions) < number_pigs and num_attempts < max_attempts:
         pig_values = []         # three different factors are used to calculate the desirability of each possible pig locations
         f1 = []                 # the protection the location provides
         f2 = []                 # how far away the location is from other already selected locations
@@ -1284,6 +1285,8 @@ def add_pigs(number_pigs, possible_pig_positions, complete_locations, pig_protec
                     valid_pig = False
             if valid_pig == True:
                 final_pig_positions.append(test_position)
+            else:
+                num_attempts = num_attempts + 1
 
     print("Number of pigs: ", len(final_pig_positions))
                 
