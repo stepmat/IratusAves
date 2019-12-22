@@ -5,7 +5,7 @@ https://aibirds.org/other-events/level-generation-competition.html
 Used to generate levels for the Science-Birds game by Lucas N. Ferreira:
 https://github.com/lucasnfe/Science-Birds
 
-To generate levels, run the IratusAves.py program (python IratusAves.py)
+To generate levels, run the IratusAves.py program
 
 The number and content of the generated levels can be changed by altering the parameter values at the top of IratusAves.py
 We recommend that first time and casual users only adjust the variables located in the "Simple parameters" section
